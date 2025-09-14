@@ -7,19 +7,18 @@ def stream_users_in_batches(batch_size):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM user_data")
 
-    while True:
+    while True:  # loop 1
         rows = cursor.fetchmany(batch_size)
         if not rows:
             break
-        # Convert sqlite3.Row objects to dicts
         yield [dict(row) for row in rows]
 
     conn.close()
 
 
 def batch_processing(batch_size):
-    """Process each batch: only print users over the age of 25."""
-    for batch in stream_users_in_batches(batch_size):
-        for user in batch:
+    """Processes each batch to filter users over the age of 25."""
+    for batch in stream_users_in_batches(batch_size):  # loop 2
+        for user in batch:  # loop 3
             if user['age'] > 25:
                 print(user)
