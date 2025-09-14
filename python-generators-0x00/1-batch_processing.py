@@ -1,7 +1,9 @@
 import sqlite3
 
 def stream_users_in_batches(batch_size):
-    """Generator that yields batches of users from the database."""
+    """
+    Generator: Yields batches (lists) of users from the user_data table.
+    """
     conn = sqlite3.connect('users.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -11,14 +13,17 @@ def stream_users_in_batches(batch_size):
         rows = cursor.fetchmany(batch_size)
         if not rows:
             break
+        # Convert rows to dicts and yield them as one batch
         yield [dict(row) for row in rows]
 
     conn.close()
 
 
 def batch_processing(batch_size):
-    """Processes each batch to filter users over the age of 25."""
+    """
+    Generator: Iterates over batches and yields users over age 25.
+    """
     for batch in stream_users_in_batches(batch_size):  # loop 2
         for user in batch:  # loop 3
             if user['age'] > 25:
-                print(user)
+                yield user   # <---- yield generator used here
